@@ -1,5 +1,6 @@
 #pragma once
 #include "inc.hpp"
+#include"type.hpp"
 constexpr char spc = '"';
 constexpr char splitChar = '\t';
 #define dataFolder string("ser_data/")
@@ -142,6 +143,7 @@ namespace dataManager {
 	//	decay_t<_Second> second = recover<_Second>(ss);
 	//	return pair<_First, _Second>({first, second});
 	//}
+
 	template<typename type>
 	enable_if_t<is_same_v<decay_t<type>,string>, type>recover(stringstream& ss) {
 		return undoFormlize(ss);
