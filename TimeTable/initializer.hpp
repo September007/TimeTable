@@ -19,8 +19,7 @@ public:
 		for (auto& t : tasks)
 		{
 			t.second();
-			if (willRec)
-				;
+			//if (willRec);
 		}
 		tasks.clear();
 	}

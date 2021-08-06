@@ -7,6 +7,9 @@
 struct course {
 	string name = "";
 	uint32_t time_val = 0;
+	bool operator ==(const course& r)const {
+		return name == r.name && time_val == r.time_val;
+	}
 	static course recover(stringstream& ss) {
 		ss >> ws;
 		course ret;
@@ -20,9 +23,6 @@ struct course {
 		 //ss << format("{}", c);
 		ss << formlize(c.name) << formlize(to_string( c.time_val));
 		 return ss;
-	}
-	bool operator ==(const course& r)const {
-		return name == r.name && time_val == r.time_val;
 	}
 };
 //template < typename _CharT>

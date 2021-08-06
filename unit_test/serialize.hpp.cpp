@@ -1,8 +1,15 @@
 #include "pch.h"
 #include"../TimeTable/serialize.hpp"
 #include"../TimeTable/course_define.hpp"
+#include"../TimeTable/serialize.cpp"
 const string test_prefix_folder = "test/";
 using  namespace dataManager;
+
+using psi = pair<string, int>;
+using vs = vector<string>;
+using msi = map<string, int>;
+using mmsi = multimap<string, int>;
+
 TEST(serialize, formalize)
 {
 	EXPECT_EQ(formlize(R"()"), R"(""	)");
@@ -38,17 +45,17 @@ l3
 l4" 
 l5)");
 }
-TEST(serialize, is_simple_type) {
+TEST(serialize, is_built_in_type) {
 	using psi = pair < string, int>;
-	EXPECT_EQ(is_simple_type<int>, true);
-	EXPECT_EQ(is_simple_type<char>, true);
-	EXPECT_EQ(is_simple_type<float>, true);
-	EXPECT_EQ(is_simple_type<int*>, true);
-	EXPECT_EQ(is_simple_type<string>, false);
-	EXPECT_EQ(is_simple_type<vector<int>>, false);
-	EXPECT_EQ(is_simple_type<psi>, false);
-	EXPECT_EQ(is_simple_type<int[]>, false);
-	EXPECT_EQ(is_simple_type<string[]>, false);
+	EXPECT_EQ(is_built_in_type<int>, true);
+	EXPECT_EQ(is_built_in_type<char>, true);
+	EXPECT_EQ(is_built_in_type<float>, true);
+	EXPECT_EQ(is_built_in_type<int*>, true);
+	EXPECT_EQ(is_built_in_type<string>, false);
+	EXPECT_EQ(is_built_in_type<vector<int>>, false);
+	EXPECT_EQ(is_built_in_type<psi>, false);
+	EXPECT_EQ(is_built_in_type<int[]>, false);
+	EXPECT_EQ(is_built_in_type<string[]>, false);
 }
 TEST(serialize, universal_insert) {
 	vector<int> expVi = { 1,2,3,4 }, tVi;
@@ -56,8 +63,13 @@ TEST(serialize, universal_insert) {
 	EXPECT_EQ(tVi, expVi);
 	using pic = pair<int, char>;
 	map<int, char> expMic={ {1,'a'},{2,'b'},{3,'c'} }, tMic;
-	universal_insert(vector<pic>({ {1,'a'},{2,'b'},{3,'c'} }), tMic);
+	auto temp = vector<pic>({ {1,'a'},{2,'b'},{3,'c'} });
+	universal_insert(temp, tMic);
 	EXPECT_EQ(tMic, expMic);
+	mmsi expmmsi = { {"aa",1},{"bb",2},{"cc",0},{"cc",4} }, tmmsi;
+	auto tempmmsi = vector<pair<string, int>>{ {"aa",1},{"bb",2},{"cc",0},{"cc",4} };
+	universal_insert(tempmmsi, tmmsi);
+	EXPECT_EQ(expmmsi, tmmsi);
 }
 TEST(serialize, getFileContent) {
 	system("rmdir /S /Q test & mkdir test");
@@ -67,10 +79,10 @@ TEST(serialize, getFileContent) {
 	ofstream out(test_prefix_folder + "tempFile");
 	out << con;
 	out.close();
-	auto & tempStr = getFileContent(test_prefix_folder + "tempFile");
+	auto  tempStr = getFileContent(test_prefix_folder + "tempFile");
 	EXPECT_EQ(con, tempStr);
 }
-TEST(serilize, recover_store_simple) {
+TEST(serialize, recover_store_simple) {
 	stringstream ss;
 	//ss << R"(123 12 1.2 a 12345678900 true false)";
 	store(ss, 123);
@@ -105,32 +117,84 @@ aba)",123} }, tCv[2];
 	for (int i = 0; i < 2; ++i)
 		course::store(ss, exp[i]);
 	for (int i = 0; i < 2; ++i)
-		tCv[i] = course::recover(ss);
+		tCv[i] = recover<course>(ss);
 	for (int i = 0; i < 2; ++i)
 		EXPECT_EQ(exp[i], tCv[i]);
+}
+
+TEST(serialize, recover_store_special_type) {
+	using pic = pair<int, char>;
+	pic exp = make_pair(1, 'a'), t;
+	stringstream ss;
+	store(ss,exp);
+	t = recover<pic>(ss);
+	EXPECT_EQ(exp, t);
+
+	using pcii = pair<const int, int>;
+	pcii exp2{ 1,2 };
+	store(ss, exp2);
+	auto t2 = recover<pcii>(ss);
+	EXPECT_EQ(exp2, t2);
 }
 TEST(serialize, recover_store_container) {
 	vector<course> vexp = { {"ababa",123},{R"(ab"
 "
 aba)",123} ,
 		{R"("""""""""d""""""""")",1234567890} }, tVv;
-	map<string, int> mexp = { {"ababa",123},{R"(ab"
+	stringstream ss; 
+	store<vector<course>>(ss, vexp);
+	//is_pair_type < vector<course>>;
+	tVv= recover<vector<course>>(ss);
+	EXPECT_EQ(vexp, tVv);
+	
+	 map<string, int> mexp = { {"ababa",123},{R"(ab"
 "
 aba)",123} ,
 		{R"("""""""""d""""""""")",1234567890} }, tMv;
-	stringstream ss; 
-	//store<vector, course>(ss, vexp);
-	//tVv= recover<vector, course>(ss);
-	//EXPECT_EQ(vexp, tVv);
-	using itType = decltype(mexp)::value_type;
+	store(ss, mexp);
+	tMv= recover<map<string, int>>(ss);
+	EXPECT_EQ(mexp, tMv);
+	
+	vector<string> expvs = { "ababa","dadas","DAdasa" }, tvs;
+	store(ss, expvs);
+	tvs = recover<vector<string>>(ss);
+	EXPECT_EQ(expvs, tvs);
+}
 
-	//store(ss, itType("aba", 12321));
-	//auto p = recover<pair,string,int>(ss);
-	//int i = 0;
+ //store(ss,exp##test_agr_##type); exp##test_agr_##type=recover<type>(ss); 
+#define agr(type) auto_simple_global_register(type,test_agr_##type)
+#define assign_and_set_expect(type) type exp##test_agr_##type=test_agr_##type 
+#define check_eq(type) EXPECT_EQ(test_agr_##type,exp##test_agr_##type)
 
-	//store<map, string, int>(ss, mexp);
-	//auto tempV = recover<vector, pair<string, int>>(ss);
-	//tMv.insert(tempV.begin(), tempV.end());
-	////decltype(tMv)::value_type;
-	//EXPECT_EQ(mexp, tMv);
+agr(int		);
+agr(char	);
+agr(float	);
+agr(string	);
+agr(psi		);
+agr(vs		);
+agr(msi		);
+agr(mmsi	);
+
+TEST(serialize, auto_register) {
+	stringstream ss;
+	assign_and_set_expect(int		)= 1;
+	assign_and_set_expect(char		) = 'a';
+	assign_and_set_expect(float		) = 1.234;
+	assign_and_set_expect(string		) = "balabala";
+	assign_and_set_expect(psi			) = pair<string,int>("wulala",123);
+	assign_and_set_expect(vs		) = {"wulala01","wulala02","wulala03"};
+	assign_and_set_expect(msi,	) = { {"aa",1},{"bb",2},{"cc",0} };
+	assign_and_set_expect(mmsi,	) = { {"aa",1},{"bb",2},{"cc",0},{"cc",4} };
+	store_group.do_all();
+	clear_group.do_all();
+	recover_group.do_all();
+	check_eq(int);
+	check_eq(char);
+	check_eq(float);
+	check_eq(string);
+	check_eq(psi);
+	check_eq(vs);
+	check_eq(msi);
+	check_eq(mmsi);
+
 }
