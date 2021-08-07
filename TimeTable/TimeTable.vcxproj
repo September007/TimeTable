@@ -149,10 +149,7 @@
     <ClInclude Include="type.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="global_var.cpp" />
-    <ClCompile Include="initializer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="serialize.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

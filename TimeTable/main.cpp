@@ -1,14 +1,16 @@
 #include"inc.hpp"
 #include "serialize.hpp"
 #include"course_define.hpp"
+
+//also a simple showhow of this serialization
 void initialize_env()
 {
 	//system("if not exist data mkdir data");
-	system("if not exist data/286885 mkdir data/286885");
+	system(R"(if not exist "data/286885" mkdir "data/286885")");
 	recover_group.do_all();
-	if(all_course.size()==0)
+	if(all_course.empty())
 	{
-		decltype(all_course) new_all_course = {
+		decay_t<decltype(all_course)> new_all_course = {
 			{"高数",32},
 			{"现代",16},
 			{"概率论",16},
@@ -19,10 +21,10 @@ void initialize_env()
 		};
 		all_course = new_all_course;
 	}
-	
+	store_group.do_all();
 }
 
 int main() {
-	int i;
+	initialize_env();
 	return 0;
 }

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="头文件\entity">
-      <UniqueIdentifier>{dfa5218a-48ed-4279-a457-6d25302f170c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="serialize.hpp">
@@ -27,27 +24,18 @@
     <ClInclude Include="type.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="time_transform.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="course_define.hpp">
-      <Filter>头文件\entity</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="initializer.hpp">
-      <Filter>头文件\entity</Filter>
-    </ClInclude>
-    <ClInclude Include="time_transform.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="initializer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="global_var.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="serialize.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

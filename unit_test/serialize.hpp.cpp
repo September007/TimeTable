@@ -1,7 +1,6 @@
 #include "pch.h"
 #include"../TimeTable/serialize.hpp"
 #include"../TimeTable/course_define.hpp"
-#include"../TimeTable/serialize.cpp"
 #include<format>
 const string test_prefix_folder = "test/";
 using  namespace dataManager;
@@ -163,7 +162,7 @@ aba)",123} ,
 }
 
  //store(ss,exp##test_agr_##type); exp##test_agr_##type=recover<type>(ss); 
-#define agr(type)  __auto_udf_register(type,test_agr_##type,,"data/test/"#type".ini")// auto_simple_global_register(type,test_agr_##type)
+#define agr(type)  __auto_userDefine_register(type,test_agr_##type,,"data/test/"#type".ini")// auto_simple_global_register(type,test_agr_##type)
 #define assign_and_set_expect(type) type exp##test_agr_##type=test_agr_##type 
 #define check_eq(type) EXPECT_EQ(test_agr_##type,exp##test_agr_##type)
 

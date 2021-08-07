@@ -226,7 +226,7 @@ struct task_group {
 			p->second();
 	}
 };
-
+//将宏代码替换为模板代码，以便debug
 template<typename type>
 inline void f_register_recover(type* data, const string& path)
 {
@@ -253,18 +253,12 @@ inline task_group& clear_group_sub() { static task_group sta_clear_group; return
 inline task_group& recover_group = recover_group_sub();
 inline task_group& store_group = store_group_sub();
 inline task_group& clear_group = clear_group_sub();
+
 //auto register data ,so that manage them would be easy
-#define __auto_udf_register(type,name,reg,path) type name=(\
+#define __auto_userDefine_register(type,name,reg,path) type name=(\
  recover_group##reg.all_tasks.insert(pair<string,data_task>(#name,[](){f_register_recover(&name,path);})),\
  store_group##reg.all_tasks.insert(pair<string,data_task>(#name,[](){f_register_store(&name,path);})),\
  clear_group##reg.all_tasks.insert(pair<string,data_task>(#name,[](){name=type();})),\
  type());
-//
-//#define __auto_udf_register(type,name,reg,path) type name=(\
-// reg##recover_group.all_tasks.insert(pair<string,data_task>(#name,[](){stringstream ss;ss<<getFileContent(path);name= dataManager:: recover<type>(ss);})),\
-// reg##store_group.all_tasks.insert(pair<string,data_task>(#name,[](){stringstream ss; dataManager::store<type>(ss,name);ofstream out(path);out<<ss.str();})),\
-// reg##clear_group.all_tasks.insert(pair<string,data_task>(#name,[](){name=type();})),\
-// type());
-
-#define auto_udf_register(type,name,reg) __auto_udf_register(type,name,reg,"data/"#name".ini")
-#define auto_simple_global_register(type,name) __auto_udf_register(type,name,,"data/"#name".ini")
+#define auto_udf_register(type,name,reg) __auto_userDefine_register(type,name,reg,"data/"#name".ini")
+#define auto_simple_global_register(type,name) __auto_userDefine_register(type,name,,"data/"#name".ini")

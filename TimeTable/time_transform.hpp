@@ -48,3 +48,9 @@ inline time_t str2time_t(const string &szTime,const char* format="%4d/%2d/%2d %2
 //————————————————
 //版权声明：本文为CSDN博主「nanhaizhixin」的原创文章，遵循CC 4.0 BY - SA版权协议，转载请附上原文出处链接及本声明。
 //原文链接：https ://blog.csdn.net/nanhaizhixin/article/details/8349668
+
+//
+inline int dayWho(time_t tt)
+{
+    return (tt + 1) / (24 * 60 * 60) * (24 * 60 * 60);
+}
