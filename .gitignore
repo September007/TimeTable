@@ -1,5 +1,6 @@
 ## ignore local ini files
-*.ini
+*/data/
+*/test/
 
 
 

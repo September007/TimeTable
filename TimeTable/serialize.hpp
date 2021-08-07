@@ -78,16 +78,11 @@ inline string  getFileContent(string fileName) {
 	auto p = ret.str();
 	return p;
 }
-// boolalpha set ,with no test
+//// boolalpha set ,with no test
 template<typename type>
-inline enable_if_t<!is_same_v<bool,type>> set_boolalpha_if_bool(stringstream& ss) {};
+inline void set_boolalpha_if_bool(stringstream& ss) { if constexpr (is_same_v<decay_t<type>, bool>) ss << boolalpha; };
 template<typename type>
-inline enable_if_t<is_same_v<bool, type>> set_boolalpha_if_bool(stringstream& ss) { ss << boolalpha; };
-template<typename type>
-inline enable_if_t<!is_same_v<bool, type>> unset_boolalpha_if_bool(stringstream& ss) {};
-template<typename type>
-inline enable_if_t<is_same_v<bool, type>> unset_boolalpha_if_bool(stringstream& ss) { ss << noboolalpha; };
-
+inline void unset_boolalpha_if_bool(stringstream& ss) { if constexpr (is_same_v<decay_t<type>, bool>) ss << noboolalpha; };
 
 //denote the method to store and recover data
 #define  chooseFile
@@ -146,6 +141,9 @@ namespace dataManager {
 		decay_t<type> ret;
 		size_t sz;
 		ss >> sz;
+		//if ss does not have data,so we return a empty container
+		if (!ss.good())
+			return ret;
 		tempVector.reserve(sz);
 		for (int i = 0; i < sz; ++i)
 			tempVector.push_back(recover<decay_t<typename type::value_type>>(ss));
@@ -228,16 +226,45 @@ struct task_group {
 			p->second();
 	}
 };
-extern task_group recover_group;
-extern task_group store_group;
-extern task_group clear_group;
 
+template<typename type>
+inline void f_register_recover(type* data, const string& path)
+{
+	stringstream ss;
+	ss << getFileContent(path);
+	*data = dataManager::recover<type>(ss);
+};
+template<typename type>
+inline void f_register_store(type* data, const string& path)
+{
+	stringstream ss;
+	dataManager::store(ss,*data);
+	ofstream out(path);
+	out << ss.str();
+	out.close();
+};
+//this is a trick,to hide the static variable to the function so that we dont need to worry
+//about the order of static var initialization
+// and more, the inline reference var, is to fit the macro param rule "param reg should be var,not func"
+inline task_group& recover_group_sub() { static task_group sta_recover_group; return sta_recover_group; };
+inline task_group& store_group_sub() { static task_group sta_store_group; return sta_store_group; };
+inline task_group& clear_group_sub() { static task_group sta_clear_group; return sta_clear_group; };
+
+inline task_group& recover_group = recover_group_sub();
+inline task_group& store_group = store_group_sub();
+inline task_group& clear_group = clear_group_sub();
 //auto register data ,so that manage them would be easy
 #define __auto_udf_register(type,name,reg,path) type name=(\
- reg##recover_group.all_tasks.insert(pair<string,data_task>(#name,[](){stringstream ss;ss<<getFileContent(path);name= dataManager:: recover<type>(ss);})),\
- reg##store_group.all_tasks.insert(pair<string,data_task>(#name,[](){stringstream ss; dataManager::store<type>(ss,name);ofstream out(path);out<<ss.str();})),\
- reg##clear_group.all_tasks.insert(pair<string,data_task>(#name,[](){name=type();})),\
+ recover_group##reg.all_tasks.insert(pair<string,data_task>(#name,[](){f_register_recover(&name,path);})),\
+ store_group##reg.all_tasks.insert(pair<string,data_task>(#name,[](){f_register_store(&name,path);})),\
+ clear_group##reg.all_tasks.insert(pair<string,data_task>(#name,[](){name=type();})),\
  type());
+//
+//#define __auto_udf_register(type,name,reg,path) type name=(\
+// reg##recover_group.all_tasks.insert(pair<string,data_task>(#name,[](){stringstream ss;ss<<getFileContent(path);name= dataManager:: recover<type>(ss);})),\
+// reg##store_group.all_tasks.insert(pair<string,data_task>(#name,[](){stringstream ss; dataManager::store<type>(ss,name);ofstream out(path);out<<ss.str();})),\
+// reg##clear_group.all_tasks.insert(pair<string,data_task>(#name,[](){name=type();})),\
+// type());
 
 #define auto_udf_register(type,name,reg) __auto_udf_register(type,name,reg,"data/"#name".ini")
 #define auto_simple_global_register(type,name) __auto_udf_register(type,name,,"data/"#name".ini")

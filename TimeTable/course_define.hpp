@@ -25,16 +25,23 @@ struct course {
 		 return ss;
 	}
 };
-//template < typename _CharT>
-//struct std::formatter<course, _CharT> : std::formatter<string, _CharT>
-//{
-//	template <typename _FormatContext>
-//	auto format(const course& v, _FormatContext& format_context )
-//	{
-//		auto Ite = std::formatter<string, _CharT>::format(v.name, format_context);
-//		Ite = '\n';
-//		Ite = std::formatter<uint32_t, _CharT>().format(v.time_val, format_context);
-//		return Ite;
-//	}
-//};
+struct course_table_one_day
+{
+	time_t whoDay;
+	vector<pair<pair<time_t, time_t>, course>> time_management;
+	static course_table_one_day recover(stringstream&ss)
+	{
+		course_table_one_day ret;
+		ret.whoDay = dataManager::recover<time_t>(ss);
+		ret.time_management = dataManager::recover<decltype(time_management)>(ss);
+		return ret;
+	}
+	static stringstream&store(stringstream&ss,const course_table_one_day&data)
+	{
+		dataManager::store(ss, data.whoDay);
+		dataManager::store(ss, data.time_management);
+		return ss;
+	}
+};
 extern vector<course> all_course;
+extern vector<course_table_one_day> all_table;

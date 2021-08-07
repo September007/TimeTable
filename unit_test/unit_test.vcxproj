@@ -43,6 +43,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="serialize.hpp.cpp" />
+    <ClCompile Include="time_tranform.hpp.cpp" />
     <ClCompile Include="type.hpp.cpp" />
   </ItemGroup>
   <ItemGroup>

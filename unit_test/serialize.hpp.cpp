@@ -167,7 +167,7 @@ aba)",123} ,
 #define assign_and_set_expect(type) type exp##test_agr_##type=test_agr_##type 
 #define check_eq(type) EXPECT_EQ(test_agr_##type,exp##test_agr_##type)
 
-agr(int		);
+agr(int);
 agr(char	);
 agr(float	);
 agr(string	);

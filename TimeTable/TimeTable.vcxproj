@@ -145,6 +145,7 @@
     <ClInclude Include="initializer.hpp" />
     <ClInclude Include="serialize.hpp" />
     <ClInclude Include="inc.hpp" />
+    <ClInclude Include="time_transform.hpp" />
     <ClInclude Include="type.hpp" />
   </ItemGroup>
   <ItemGroup>
