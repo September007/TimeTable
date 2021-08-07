@@ -2,6 +2,7 @@
 #include"../TimeTable/serialize.hpp"
 #include"../TimeTable/course_define.hpp"
 #include"../TimeTable/serialize.cpp"
+#include<format>
 const string test_prefix_folder = "test/";
 using  namespace dataManager;
 
@@ -9,7 +10,6 @@ using psi = pair<string, int>;
 using vs = vector<string>;
 using msi = map<string, int>;
 using mmsi = multimap<string, int>;
-
 TEST(serialize, formalize)
 {
 	EXPECT_EQ(formlize(R"()"), R"(""	)");
@@ -72,7 +72,7 @@ TEST(serialize, universal_insert) {
 	EXPECT_EQ(expmmsi, tmmsi);
 }
 TEST(serialize, getFileContent) {
-	system("rmdir /S /Q test & mkdir test");
+	create_directory("test");
 	string con = R"(dadsad
 132425364!#$@%$#^$%&#^$=46897/79973
 "D:M<>?ADSFVCL::""AX:Asdlq})";
@@ -81,6 +81,7 @@ TEST(serialize, getFileContent) {
 	out.close();
 	auto  tempStr = getFileContent(test_prefix_folder + "tempFile");
 	EXPECT_EQ(con, tempStr);
+	delete_directory("test");
 }
 TEST(serialize, recover_store_simple) {
 	stringstream ss;
@@ -162,7 +163,7 @@ aba)",123} ,
 }
 
  //store(ss,exp##test_agr_##type); exp##test_agr_##type=recover<type>(ss); 
-#define agr(type) auto_simple_global_register(type,test_agr_##type)
+#define agr(type)  __auto_udf_register(type,test_agr_##type,,"data/test/"#type".ini")// auto_simple_global_register(type,test_agr_##type)
 #define assign_and_set_expect(type) type exp##test_agr_##type=test_agr_##type 
 #define check_eq(type) EXPECT_EQ(test_agr_##type,exp##test_agr_##type)
 
@@ -175,16 +176,17 @@ agr(vs		);
 agr(msi		);
 agr(mmsi	);
 
-TEST(serialize, auto_register) {
+TEST(serialize, __auto_udf_register) {
+	create_directory("data/test");
 	stringstream ss;
-	assign_and_set_expect(int		)= 1;
+	assign_and_set_expect(int		) = 1;
 	assign_and_set_expect(char		) = 'a';
 	assign_and_set_expect(float		) = 1.234;
-	assign_and_set_expect(string		) = "balabala";
-	assign_and_set_expect(psi			) = pair<string,int>("wulala",123);
+	assign_and_set_expect(string	) = "balabala";
+	assign_and_set_expect(psi		) = pair<string,int>("wulala",123);
 	assign_and_set_expect(vs		) = {"wulala01","wulala02","wulala03"};
-	assign_and_set_expect(msi,	) = { {"aa",1},{"bb",2},{"cc",0} };
-	assign_and_set_expect(mmsi,	) = { {"aa",1},{"bb",2},{"cc",0},{"cc",4} };
+	assign_and_set_expect(msi,		) = { {"aa",1},{"bb",2},{"cc",0} };
+	assign_and_set_expect(mmsi,		) = { {"aa",1},{"bb",2},{"cc",0},{"cc",4} };
 	store_group.do_all();
 	clear_group.do_all();
 	recover_group.do_all();
@@ -197,4 +199,5 @@ TEST(serialize, auto_register) {
 	check_eq(msi);
 	check_eq(mmsi);
 
+	delete_directory("data/test");
 }

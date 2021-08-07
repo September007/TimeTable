@@ -36,6 +36,19 @@ inline string undoFormlize(stringstream &ss) {
 	}
 }
 
+inline void create_directory(string path)
+{
+	//auto cmd = format(R"(rmdir /S /Q "{}" & mkdir "{}")", path, path);
+	auto cmd = format(R"(if not exist "{}" mkdir "{}")", path, path);
+	system(cmd.c_str());
+}
+
+inline void delete_directory(string path)
+{
+	auto cmd = format(R"(if exist "{}" rmdir /S /Q "{}")", path, path);
+	system(cmd.c_str());
+}
+
 template<typename elemType>
 void universal_insert(vector<elemType>& datas, vector<elemType>& to) {
 	to.insert(to.end(), datas.begin(), datas.end());
@@ -60,7 +73,7 @@ void universal_insert(vector<pair<add_const_t<T1>, T2>>& datas, multimap<T1, T2>
 ////for simple typ
 inline string  getFileContent(string fileName) {
 	stringstream ret;
-	ifstream in(fileName);
+	const ifstream in(fileName);
 	ret << in.rdbuf();
 	auto p = ret.str();
 	return p;
