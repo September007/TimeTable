@@ -1,15 +1,21 @@
 #pragma once
+//#include<timezoneapi.h>
 #include <cstdio>
 #include <ctime>
 #include<string>
 using std::string;
-inline string time_t2_string(time_t time1,const char* format="%4.4d/%2.2d/%2.2d %2.2d:%2.2d:%2.2d")
+//#define time_zone 
+
+inline string time_t2_string(time_t tt,const char* format="%4.4d/%2.2d/%2.2d %2.2d:%2.2d:%2.2d")
 {
     struct tm tm1;
     char szTime[128];
-
+#if defined(time_zone)
+    //+8时区
+    tt -= 8 * 3600;
+#endif
 #ifdef WIN32
-    tm1 = *localtime(&time1);
+    tm1 = *localtime(&tt);
 #else
     localtime_r(&time1, &tm1);
 #endif
@@ -24,7 +30,7 @@ inline string time_t2_string(time_t time1,const char* format="%4.4d/%2.2d/%2.2d 
 inline time_t str2time_t(const string &szTime,const char* format="%4d/%2d/%2d %2d:%2d:%2d")
 {
     struct tm tm1;
-    time_t time1;
+    time_t tt;
 
     sscanf(szTime.c_str(), format,
         &tm1.tm_year,
@@ -40,17 +46,19 @@ inline time_t str2time_t(const string &szTime,const char* format="%4d/%2d/%2d %2
 
     tm1.tm_isdst = -1;
 
-    time1 = mktime(&tm1);
-    return time1;
+    tt = mktime(&tm1);
+    if (tt == -1)throw std::exception("tm out of range!!");
+#if defined(time_zone)
+	//+8时区
+    tt += 8 * 60 * 60;
+#endif
+    return tt;
 }
 
 
-//————————————————
-//版权声明：本文为CSDN博主「nanhaizhixin」的原创文章，遵循CC 4.0 BY - SA版权协议，转载请附上原文出处链接及本声明。
-//原文链接：https ://blog.csdn.net/nanhaizhixin/article/details/8349668
-
-//
+//return the serial number from 1970.1.1
 inline int dayWho(time_t tt)
 {
-    return (tt + 1) / (24 * 60 * 60) * (24 * 60 * 60);
+    constexpr int daySeconds = 24 * 60 * 60;
+    return (tt+8*3600) / daySeconds;
 }

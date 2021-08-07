@@ -24,6 +24,8 @@ concept nonContainer = !(requires(T x) {
 	//{x} noexcept -> same_as<T>;
 } && !is_same_v<decay_t<T>, string>);
 
+template<template<typename ...rest> typename T,typename ...rest>
+concept SequenceContainer = Container<T<rest...>> && (is_same_v<decay_t<T<rest...>>, vector<rest...>>|| is_same_v<decay_t<T<rest...>>, set<rest...>>);
 //non class,non array,non union
 template<typename T>
 constexpr bool is_built_in_type = /*is_pod_v<T> && */!is_union_v<T> && !is_class_v<T>&&!is_array_v<T>;

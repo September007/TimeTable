@@ -21,6 +21,12 @@ TEST(type, Container) {
 	EXPECT_EQ(t_cont(map<int,char>()), 1);
 }
 
+TEST(type,SequenceContainer)
+{
+	//EXPECT_EQ(false, SequenceContainer<int>);
+	//EXPECT_EQ(false, SequenceContainer<int>);
+}
+
 
 TEST(type, is_pair_type) {
 	EXPECT_EQ(is_pair_type<int>, false);

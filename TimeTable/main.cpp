@@ -26,5 +26,6 @@ void initialize_env()
 
 int main() {
 	initialize_env();
+	auto p = cook_new_table(vector<lesson_table_one_day>(), str2time_t("2021/08/08 00:00:00"), default_time_split, 7, 10, 2);
 	return 0;
 }

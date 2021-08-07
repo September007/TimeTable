@@ -49,8 +49,8 @@ inline void delete_directory(string path)
 	system(cmd.c_str());
 }
 
-template<typename elemType>
-void universal_insert(vector<elemType>& datas, vector<elemType>& to) {
+template<template<typename ...elemType>typename Cont,typename ...elemType>requires Container<Cont<elemType...>>
+void universal_insert(vector<elemType...>& datas, Cont<elemType...>& to) {
 	to.insert(to.end(), datas.begin(), datas.end());
 }
 
@@ -88,13 +88,7 @@ inline void unset_boolalpha_if_bool(stringstream& ss) { if constexpr (is_same_v<
 #define  chooseFile
 #ifdef chooseFile
 namespace dataManager {
-	/*
-	*  NOTICE
-	* for a non-std::container object, should call the recover and store with stringstream 'ss'
-	* and for others std::container object, call those funcs with string 'fileName'
-	*
-	*/
-
+	
 	/////////////
 	// recover //
 	/////////////
