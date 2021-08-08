@@ -4,6 +4,7 @@
 constexpr char spc = '"';
 constexpr char splitChar = '\t';
 #define dataFolder string("ser_data/")
+
 inline string formlize(const string& s) {
 	string ret;
 	ret+= '"';
@@ -70,7 +71,7 @@ template<typename T1, typename T2>
 void universal_insert(vector<pair<add_const_t<T1>, T2>>& datas, multimap<T1, T2>& to) {
 	to.insert(datas.begin(), datas.end());
 }
-////for simple typ
+////for simple type
 inline string  getFileContent(string fileName) {
 	stringstream ret;
 	const ifstream in(fileName);
@@ -92,10 +93,8 @@ namespace dataManager {
 	/////////////
 	// recover //
 	/////////////
-	//for simple data
-	template<typename type>
-	enable_if_t<is_built_in_type<type>, type >
-		recover(stringstream& ss)
+	template<built_in_non_array_type type>
+	type recover(stringstream& ss)
 	{
 		//for bool 
 		set_boolalpha_if_bool<type>(ss);
@@ -105,10 +104,8 @@ namespace dataManager {
 		return ret;
 
 	};
-	//for user define class ,but require recover implementation
-	template<typename type>
-	enable_if_t<is_same_v<type, decltype(type::recover(declval<stringstream&>()))>, type >
-		recover(stringstream& ss)
+	template<imple_recover_store type>
+	type recover(stringstream& ss)
 	{
 		return type::recover(ss);
 	};
@@ -116,19 +113,18 @@ namespace dataManager {
 	/****************** for special type **********************/
 	/**********************************************************/
 
-	template<typename type>requires is_string_type<type>
+	template<string_type type>
 	type recover(stringstream& ss) {
 		return undoFormlize(ss);
 	}
-	template<typename type>requires is_pair_type<type>
+	template<pair_type type>
 	type recover(stringstream& ss) {
 		//pair<_First, _Second> ret;
 		decay_t<typename type::first_type> first = recover<decay_t< type::first_type>>(ss);//pair<int,int>::first_type
 		decay_t<typename type::second_type> second = recover<type::second_type>(ss);
 		return type({first, second});
 	}
-	//for contatiner, require range func begin() ....and value_type
-	template<typename type> requires Container<type>
+	template<Container type> 
 	 type	recover(stringstream &ss)
 	{
 		vector<typename type::value_type> tempVector;
@@ -147,8 +143,7 @@ namespace dataManager {
 	/////////////
 	//  store  //
 	/////////////
-	//for simple data
-	template<typename type> requires is_built_in_type<type>
+	template<built_in_non_array_type type> 
 	stringstream&	store(stringstream& ss, const type &data) 
 	{
 		//for bool 
@@ -157,10 +152,8 @@ namespace dataManager {
 		unset_boolalpha_if_bool<type>(ss);
 		return ss;
 	};
-	//for user define class,but require store implementation
-	template<typename type>
-	enable_if_t<is_same_v<stringstream,decay_t<decltype(type::store(declval<stringstream&>(),declval<type>()))>>, stringstream&>
-		store(stringstream& ss, const type data)
+	template<imple_recover_store type>
+	stringstream& store(stringstream& ss, const type data)
 	{
 		return type::store(ss, data);
 	};
@@ -169,26 +162,25 @@ namespace dataManager {
 	/**********************************************************/
 	//模板也有声明顺序的讲究，string须在pair前，pair须在container前
 	//所以最好是声明和实现分开
-	template<typename type>requires is_string_type<decay_t< type>>
+	template<string_type type>
 	 stringstream & store(stringstream& ss, const type& data) {
 		ss << formlize(data);
 		return ss;
 	}
-	template<typename T> requires is_pair_type<T>
+	template<pair_type T>
 		stringstream& store(stringstream& ss, const T& data);
-	//for contatiner, but require range func begin() and type value_type
-	template<typename T>requires Container<T>
+	template<Container T>
 		stringstream& store(stringstream& ss, const T& con);
 	/**********************************************************/
 	/****************** store implementation ******************/
 	/**********************************************************/
-	template<typename T> requires is_pair_type<T>
+	template<pair_type T> 
 		stringstream& store(stringstream& ss, const T& data) {
 			store<T::first_type>(ss, data.first);
 			store<T::second_type>(ss, data.second);
 			return ss;
 		}
-	template<typename T>requires Container<T>
+	template<Container T>
 	stringstream&	store(stringstream &ss, const T& con) {
 		using itType =typename T::value_type;
 		//output content size

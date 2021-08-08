@@ -46,15 +46,15 @@ l5)");
 }
 TEST(serialize, is_built_in_type) {
 	using psi = pair < string, int>;
-	EXPECT_EQ(is_built_in_type<int>, true);
-	EXPECT_EQ(is_built_in_type<char>, true);
-	EXPECT_EQ(is_built_in_type<float>, true);
-	EXPECT_EQ(is_built_in_type<int*>, true);
-	EXPECT_EQ(is_built_in_type<string>, false);
-	EXPECT_EQ(is_built_in_type<vector<int>>, false);
-	EXPECT_EQ(is_built_in_type<psi>, false);
-	EXPECT_EQ(is_built_in_type<int[]>, false);
-	EXPECT_EQ(is_built_in_type<string[]>, false);
+	EXPECT_EQ(built_in_non_array_type<int>, true);
+	EXPECT_EQ(built_in_non_array_type<char>, true);
+	EXPECT_EQ(built_in_non_array_type<float>, true);
+	EXPECT_EQ(built_in_non_array_type<int*>, true);
+	EXPECT_EQ(built_in_non_array_type<string>, false);
+	EXPECT_EQ(built_in_non_array_type<vector<int>>, false);
+	EXPECT_EQ(built_in_non_array_type<psi>, false);
+	EXPECT_EQ(built_in_non_array_type<int[]>, false);
+	EXPECT_EQ(built_in_non_array_type<string[]>, false);
 }
 TEST(serialize, universal_insert) {
 	vector<int> expVi = { 1,2,3,4 }, tVi;
