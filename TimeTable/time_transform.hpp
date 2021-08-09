@@ -17,7 +17,7 @@ inline string time_t2_string(time_t tt,const char* format="%4.4d/%2.2d/%2.2d %2.
 #ifdef WIN32
     tm1 = *localtime(&tt);
 #else
-    localtime_r(&time1, &tm1);
+    localtime_s(&tm1, &tt);
 #endif
     sprintf(szTime,format ,
         tm1.tm_year + 1900, tm1.tm_mon + 1, tm1.tm_mday,

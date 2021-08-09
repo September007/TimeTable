@@ -1,4 +1,4 @@
-//define some assistant concept and template boolean
+//define some assistant concept 
 #pragma once
 #include"inc.hpp"
 #include<concepts>
@@ -36,15 +36,3 @@ template<typename T>concept pair_type
 
 template<typename T>concept string_type
 = same_as<string, decay_t<T>>;
-
-
-
-////non class,non array,non union
-//template<typename T>constexpr bool is_built_in_type
-//= /*is_pod_v<T> && */!is_union_v<T> && !is_class_v<T>&&!is_array_v<T>;
-//
-//template<typename T>
-//constexpr bool is_pair_type = pair_type<T>;
-//
-//template<typename T>
-//constexpr bool is_string_type = is_same_v<string, T> && is_same_v<T, string>;

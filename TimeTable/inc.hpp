@@ -9,19 +9,25 @@
 #include<set>
 #include<functional>
 #include<mutex>
-//#include<format>
+#include<format>
 #include<type_traits>
 //#include<timezoneapi.h>
 using namespace std;
+using std::stringstream;
+using std::stoi;
+using std::ws;
+using std::string;
 
+using std::vector;
+using std::map;
 #define _assert(flag) if(!(flag))throw 1;
 #define trace_line cout<<"at:"<<__LINE__<<endl
 #define trace_arg(arg) cout<<#arg<<arg<<endl
 #define inline_reference_var_helper(type,name) inline type& name##_sub(){static type sta_##name;return sta_##name;}inline type &name=name##_sub();
 
 //stringstream 流的转换
-inline stringstream& ssOS2SS(ostream & ssOS) {
-	auto* p = (stringstream*)&ssOS;
+inline std::stringstream& ssOS2SS(std::ostream & ssOS) {
+	auto* p = (std::stringstream*)&ssOS;
 	return *p;
 }
 //时间转换
