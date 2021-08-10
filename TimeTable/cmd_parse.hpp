@@ -1,11 +1,13 @@
 #pragma once
 #include"inc.hpp"
-using command_task_type = function<int(const vector<string>&,istream&,ostream&,ostream&)>;
+struct command_parser;
+using command_task_type = function<int(const vector<string>&, istream&, ostream&, ostream&)>;
+using extend_command_task_type = function<int(const command_parser&cp,const vector<string>&, istream&, ostream&, ostream&)>;
 using msc = map<string, command_task_type>;
+using msec = map<string, extend_command_task_type>;
 inline_reference_var_helper(msc, reg_commands);
-
-inline
-vector<string> getOneCommand(istream& in)
+inline_reference_var_helper(msec, reg_extend_commands);
+inline vector<string> getOneCommand(istream& in)
 {
 	vector<string >ret;
 	bool inStart = true;
@@ -82,7 +84,7 @@ vector<string> getOneCommand(istream& in)
 	}
 	return ret;
 }
-command_task_type find_task(msc& cms, const vector<string>&pms)
+inline command_task_type find_task(msc& cms, const vector<string>&pms)
 {
 	if (pms.empty())return nullptr;
 	for (auto sc : cms)

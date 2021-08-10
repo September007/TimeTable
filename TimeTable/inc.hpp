@@ -30,6 +30,14 @@ inline std::stringstream& ssOS2SS(std::ostream & ssOS) {
 	auto* p = (std::stringstream*)&ssOS;
 	return *p;
 }
+inline string operator""_s(const char* p, size_t)
+{
+	return p;
+}
+inline string operator""_S(const char* p, size_t st)
+{
+	return operator""_s(p, st);
+}
 //Ê±¼ä×ª»»
 inline time_t operator""_M(const char* p, size_t)
 {

@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="cmds.hpp" />
     <ClInclude Include="cmd_parse.hpp" />
     <ClInclude Include="course_define.hpp" />
     <ClInclude Include="initializer.hpp" />

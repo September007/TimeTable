@@ -1,12 +1,13 @@
 #include"inc.hpp"
 #include "serialize.hpp"
 #include"course_define.hpp"
-
+#include"cmds.hpp"
 //also a simple showhow of this serialization
 void initialize_env()
 {
-	//system("if not exist data mkdir data");
 	system(R"(if not exist "data/286885" mkdir "data/286885")");
+	//ƒ¨»œ√¸¡ÓºØ
+	default_initial_cmds(reg_commands);
 	//recover_group.do_all();
 	if(all_course.empty())
 	{
@@ -25,8 +26,9 @@ void initialize_env()
 }
 
 int main() {
-	cout << "sizeof int" << sizeof int() << endl;
+
 	initialize_env();
-	auto p = cook_new_table(vector<lesson_table_one_day>(), str2time_t("2021/08/08 00:00:00"), default_time_split, 7, 10, 2);
+	stupid_shell({ "stupid_shell" }, cin, cout, cerr);
+	//auto p = cook_new_table(vector<lesson_table_one_day>(), str2time_t("2021/08/08 00:00:00"), default_time_split, 7, 10, 2);
 	return 0;
 }
