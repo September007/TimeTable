@@ -7,6 +7,7 @@ using msc = map<string, command_task_type>;
 using msec = map<string, extend_command_task_type>;
 inline_reference_var_helper(msc, reg_commands);
 inline_reference_var_helper(msec, reg_extend_commands);
+
 inline vector<string> getOneCommand(istream& in)
 {
 	vector<string >ret;

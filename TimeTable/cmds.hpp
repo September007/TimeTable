@@ -78,6 +78,20 @@ inline int echo(const vector<string>& vs, istream& ins, ostream& ous, ostream& e
 inline int stupid_shell(const vector<string>& vs, istream& ins, ostream& ous, ostream& errs)
 {
 	command_parser cp;
+	static bool isFirst = true;
+	if(isFirst)
+	{
+		isFirst = false;
+		if(isTodayNeedPlan())
+		{
+			ous << "this day does not have a plan ,would you want create one? Y/N" << flush;
+			char c;
+			ins >> c;
+			c = toupper(c);
+			if (c == 'Y')
+				cp({ "add plan","-l 1" });
+		}
+	}
 	int ret;
 	cp({ "help" });
 	cp({ "echo", "\nTimeTable>","-n" });

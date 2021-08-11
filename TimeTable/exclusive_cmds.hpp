@@ -64,6 +64,14 @@ inline int show_plan(const vector<string>& vs, istream&, ostream& ous, ostream&)
 	return 0;
 }
 
+inline int show_course(const vector<string>& vs, istream& ins, ostream& ous, ostream&)
+{
+	ous << "all courses list below:" << endl;
+	if (all_course.size())ous << format("{:<10} {:<10}", "name", "val");
+	for (auto& c : all_course)
+		ous << format("{:<10} {:<10}", c.name, c.time_val);
+	return 0;
+}
 inline int add_plan(const vector<string>& vs, istream& ins, ostream& ous, ostream&)
 {
 	//need para
@@ -97,6 +105,36 @@ willstore:
 	return 0;
 }
 
+inline int add_course(const vector<string>& vs, istream& ins, ostream& ous, ostream&)
+{
+	auto mps = transCmdParasTomap(vs);
+	//need para
+	string cname;
+	unsigned int val;
+	if(mps["-n"].first)
+	{
+		cname = vs[mps["-n"].second + 1];
+	}else
+	{
+		ous << "输入课程名:(回车结束)" << flush;
+		getline(ins, cname);
+	}
+	if(mps["-v"].first)
+	{
+		val = stoi(vs[mps["-v"].second]);
+	}
+	else
+	{
+		ous << "输入课程 时权:" << flush;
+		ins >> val;
+	}
+	auto nc = course{ cname,val };
+	all_course.push_back(nc);
+	store_group.do_one("sta_all_course");
+	ous << format("add new course: .name:{},.time_val:{}", cname, val);
+	return 0;
+	
+}
 inline int del_plan(const vector<string>& vs, istream& ins, ostream& ous, ostream&)
 {
 	//need para
@@ -127,6 +165,23 @@ inline int del_plan(const vector<string>& vs, istream& ins, ostream& ous, ostrea
 	store_group.do_one("sta_all_table");
 	return 0;
 }
+
+inline int del_course(const vector<string>& vs, istream& ins, ostream& ous, ostream&)
+{
+	auto mps = transCmdParasTomap(vs);
+	string name;
+	if(mps["-name"].first)
+	{
+		name = vs[mps["-name"].second + 1];
+	}else
+	{
+		ous << "输入课程名:(回车结束)" << flush;
+		getline(ins, name);
+	}
+	fliter_vector(all_course, [&](const course& c) {return c.name != name; });
+	store_group.do_one("sta_all_course");
+	return 0;
+}
 inline int del_repeat(const vector<string>& vs, istream&, ostream& ous, ostream&)
 {
 	map<int, lesson_table_one_day> temp;
@@ -136,7 +191,14 @@ inline int del_repeat(const vector<string>& vs, istream&, ostream& ous, ostream&
 	all_table.clear();
 	for (auto& t : temp)
 		all_table.emplace_back(t.second);
-	store_group.do_one("sta_all_table");
+	map<string,course> temp2;
+	for (auto& l : all_course)
+		if (temp2.find(l.name) == temp2.end())
+			temp2.emplace(l.name, l);
+	all_course.clear();
+	for (auto& t : temp2)
+		all_course.emplace_back(t.second);
+	store_group.do_all();
 	return 0;
 }
 inline int fresh_plan(const vector<string>& vs, istream& ins, ostream& ous, ostream& errs)
@@ -187,15 +249,59 @@ confirm:
 
 	return 0;
 };
+
+inline int fresh_course(const vector<string>& vs, istream& ins, ostream& ous, ostream&errs)
+{
+	show_course(vs, ins, ous, errs);
+	auto mps = transCmdParasTomap(vs);
+	string from, to;
+	if (mps["-from"].first)
+	{
+		from = vs[mps["-from"].second + 1];
+	}else
+	{
+		ous << "源课程名:（回车结束)" << flush;
+		getline(ins, from);
+	}
+	if (mps["-to"].first)
+	{
+		to = vs[mps["-to"].second + 1];
+	}
+	else
+	{
+		ous << "目的课程名:（回车结束)" << flush;
+		getline(ins, to);
+	}
+	for_each(all_table.begin(), all_table.end(), [&](lesson_table_one_day& lt)
+		{
+			for (auto& l : lt.time_management)
+				if (l.second.name == from)
+					l.second.name = to;
+		});
+	for_each(all_course.begin(), all_course.end(), [&](course& l)
+		{
+				if (l.name == from)
+					l.name = to;
+		});
+	store_group.do_all();
+	ous << "all info changed" << endl;
+	return 0;
+}
 inline void exclusive_default_initial_cms(msc& ncs, msec& cs)
 {
 	default_initial_cmds(ncs, cs);
 	ncs["show plan"] = show_plan;
 	ncs["add plan"] = add_plan;
 	ncs["del plan"] = del_plan;
-	ncs["del repeat"] = del_repeat;
 	ncs["fresh plan"] = fresh_plan;
 
+	ncs["show course"] = show_course;
+	ncs["add course"] = add_course;
+	ncs["del course"] = del_course;
+	ncs["fresh course"] = del_course;
+	
+	ncs["del repeat"] = del_repeat;
+	
 	ncs.erase(ncs.find("example"));
 	cs["example"] = example;
 }
