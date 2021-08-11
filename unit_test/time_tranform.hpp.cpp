@@ -67,3 +67,9 @@ TEST(time_transform,dayWho)
 	EXPECT_EQ(dws[6] - dws[5], 31);
 	EXPECT_EQ(dws[7] - dws[6], 1);
 }
+
+TEST(time_transeform,time_format)
+{
+	EXPECT_EQ(format("{1}{0}", 1, 2), "21");
+	EXPECT_EQ(dateFormat(str2time_t("2023/12/13 13:14:15"),"YYYY*MM*DD--HH24[MM[SS]]"), "2023*12*13--13[14[15]]");
+}

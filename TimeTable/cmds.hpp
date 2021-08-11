@@ -30,9 +30,18 @@ inline unordered_map<string, bool> getSpecialCmdParas(const vector<string>& para
 			ret[p] = true;
 	return ret;
 }
+inline unordered_map<string, pair<bool,int>> transCmdParasTomap(const vector<string>& paras)
+{
+	unordered_map<string, pair<bool, int>>ret;
+	for (int i=0;i<paras.size();++i)
+		ret[paras[i]] = pair<bool,int>{ true,i };
+	return ret;
+}
 #define paras const vector<string>& vs,istream&ins,ostream&ous,ostream&errs
 
+//命令返回值
 enum  retIndicates { shell_exit = 1000, shell_direct_leave, any_success, any_fail };
+//普通（4参）命令
 inline int sys(const vector<string>& vs, istream& ins, ostream& ous, ostream& errs)
 {
 	if (vs.size() < 2)return 0;
@@ -70,6 +79,7 @@ inline int stupid_shell(const vector<string>& vs, istream& ins, ostream& ous, os
 {
 	command_parser cp;
 	int ret;
+	cp({ "help" });
 	cp({ "echo", "\nTimeTable>","-n" });
 	while (1)
 	{
@@ -89,6 +99,7 @@ inline int stupid_shell(const vector<string>& vs, istream& ins, ostream& ous, os
 	}
 	return 0;
 }
+//无名，懒得起其他的名字的命令
 inline vector<pair<const string, command_task_type>> noneNameCmds = {
 make_pair<string,command_task_type>("exit",[](const vector<string>& vs,istream& ins,ostream& ous,ostream& errs)
 {
@@ -97,12 +108,45 @@ make_pair<string,command_task_type>("exit",[](const vector<string>& vs,istream& 
 make_pair<string,command_task_type>("dexit",[](const vector<string>& vs,istream& ins,ostream& ous,ostream& errs)
 {
 	return int(retIndicates::shell_direct_leave);
-})
+}),
+make_pair<string, command_task_type>("example", [](const vector<string>& vs, istream& ins, ostream& ous, ostream& errs)
+	{
+	ous << R"(
+	echo blabla
+	sys cls
+	sys pause
+	sys echo blabla
+	exit
+	dexit
+	)" << flush;
+		return int(retIndicates::any_success);
+	})
 };
 
-inline void default_initial_cmds(map<string, command_task_type>& ms)
+//扩展命令(5参)
+inline static int list(const command_parser& cp, const vector<string>&, istream&, ostream&, ostream&ous)
 {
-	ms.insert(noneNameCmds.begin(), noneNameCmds.end());
-	ms["sys"] = sys;
-	ms["echo"] = echo;
+	ous << "all supported commands:" << endl;
+	for(auto m:cp.cms)
+	{
+		ous << m.first << endl;
+	}
+	ous << "each commands does not have more detaily information" << endl;
+	return 0;
+}
+inline static int help(const command_parser& cp, const vector<string>&, istream&, ostream&, ostream&ous)
+{
+	ous << "type list to check all the commands,or type example for commands example \ncopyright lull@2021" << endl;
+	return 0;
+}
+//填充普通命令
+inline void default_initial_cmds(map<string, command_task_type>& cms,msec &cems )
+{
+	cms.insert(noneNameCmds.begin(), noneNameCmds.end());
+	cms["sys"] = sys;
+	cms["echo"] = echo;
+	cms["stupid_shell"] = stupid_shell;
+
+	cems["list"] = ::list;
+	cems["help"] = ::help;
 }

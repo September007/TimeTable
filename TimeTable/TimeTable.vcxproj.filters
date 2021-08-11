@@ -39,6 +39,9 @@
     <ClInclude Include="cmds.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="exclusive_cmds.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

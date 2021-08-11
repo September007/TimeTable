@@ -146,6 +146,7 @@
     <ClInclude Include="cmds.hpp" />
     <ClInclude Include="cmd_parse.hpp" />
     <ClInclude Include="course_define.hpp" />
+    <ClInclude Include="exclusive_cmds.hpp" />
     <ClInclude Include="initializer.hpp" />
     <ClInclude Include="serialize.hpp" />
     <ClInclude Include="inc.hpp" />

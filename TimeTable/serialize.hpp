@@ -208,8 +208,14 @@ struct task_group {
 	}
 	void do_one(string name){
 		auto p = all_tasks.find(name);
+		//todo:全局err 流？
+		if (p == all_tasks.end())
+			cerr << "store task does not contain " << name << endl;
 		while (p != all_tasks.end())
+		{
 			p->second();
+			p++;
+		}
 	}
 };
 //将宏代码替换为模板代码，以便debug

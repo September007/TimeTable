@@ -91,19 +91,33 @@ inline command_task_type find_task(msc& cms, const vector<string>&pms)
 		if (sc.first == pms.front())
 			return sc.second;
 	//todo: more parse rule
+	string curCmdName = pms.front();
+	for(int i=1;i<pms.size();++i)
+	{
+		curCmdName += " "+pms[i];
+		for (auto sc : cms)
+			if (sc.first == curCmdName)
+				return sc.second;
+	}
 	return nullptr;
 }
 struct command_parser
 {
-	//istream& ins;
-	//ostream& ous, &errs;
-	msc& cms;
-	//command_parser(msc& cms = reg_commands,istream& ins=cin,ostream&ous=cout,ostream&errs=cerr) : cms(cms),ins(ins) ,ous(ous),errs(errs) {}
-	command_parser(msc& cms = reg_commands) : cms(cms){}
+	//todo: if there need more attribute
+	mutable msc cms;
+	command_parser(msc& cms = reg_commands,const msec &ecms=reg_extend_commands) : cms(cms)
+	{
+		//Ìî³äÀ©Õ¹ÃüÁî
+		for (auto& ecm : ecms)
+			this->cms.insert(pair<string, command_task_type>(ecm.first, (command_task_type)bind(ecm.second, (const command_parser&)(*this), placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4)));
+	}
 	int operator()(const vector<string>& pms,istream& ins = cin, ostream& ous = cout, ostream& errs = cerr)const
 	{
 		auto task = find_task(cms, pms);
-		if (task == nullptr)return -1;
+		if (task == nullptr) {
+			errs << "not found command:" << pms[0];
+			return -1;
+		}
 		return task(pms, ins, ous, errs);
 	}
 };
