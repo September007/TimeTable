@@ -1,13 +1,21 @@
 #pragma once
 #include"inc.hpp"
 struct command_parser;
-using command_task_type = function<int(const vector<string>&, istream&, ostream&, ostream&)>;
+struct detail_command_task_type;
+using command_task_type = detail_command_task_type;
 using extend_command_task_type = function<int(const command_parser&cp,const vector<string>&, istream&, ostream&, ostream&)>;
 using msc = map<string, command_task_type>;
 using msec = map<string, extend_command_task_type>;
 inline_reference_var_helper(msc, reg_commands);
 inline_reference_var_helper(msec, reg_extend_commands);
 
+struct detail_command_task_type:function<int(const vector<string>&, istream&, ostream&, ostream&)>
+{
+	using My_Base = function<int(const vector<string>&, istream&, ostream&, ostream&)>;
+	string specification = "";
+template<typename ...argTypes>
+detail_command_task_type(argTypes...args) :My_Base(args...),specification() {}
+};
 inline vector<string> getOneCommand(istream& in)
 {
 	vector<string >ret;
