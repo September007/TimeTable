@@ -1,5 +1,5 @@
 /*
- * 几个简单的命令
+ * shell基本命令
  */
 #pragma once
 #include"inc.hpp"
@@ -153,14 +153,24 @@ inline static int help(const command_parser& cp, const vector<string>&, istream&
 	ous << "type list to check all the commands,or type example for commands example \ncopyright lull@2021" << endl;
 	return 0;
 }
+inline static int man(const command_parser& cp, const vector<string>&vs, istream&, ostream&, ostream& ous)
+{
+	if (vs.size() < 2)return 0;
+	vector<string> findVS(vs.begin() + 1, vs.end());
+	auto p=find_task(cp.cms, findVS);
+	if (p != nullptr)
+		ous << p.specification << endl;
+	return 0;
+}
 //填充普通命令
 inline void default_initial_cmds(map<string, command_task_type>& cms,msec &cems )
 {
 	cms.insert(noneNameCmds.begin(), noneNameCmds.end());
-	cms["sys"] = sys;
+	cms["sys"] = {"调用system转原生shell", sys};
 	cms["echo"] = echo;
 	cms["stupid_shell"] = stupid_shell;
-
+	
+	cems["man"] = man ;
 	cems["list"] = ::list;
 	cems["help"] = ::help;
 }

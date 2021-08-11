@@ -67,9 +67,9 @@ inline int show_plan(const vector<string>& vs, istream&, ostream& ous, ostream&)
 inline int show_course(const vector<string>& vs, istream& ins, ostream& ous, ostream&)
 {
 	ous << "all courses list below:" << endl;
-	if (all_course.size())ous << format("{:<10} {:<10}", "name", "val");
+	if (all_course.size())ous << format("{:<10} {:<10}\n", "name", "val");
 	for (auto& c : all_course)
-		ous << format("{:<10} {:<10}", c.name, c.time_val);
+		ous << format("{:<10} {:<10}\n", c.name, c.time_val);
 	return 0;
 }
 inline int add_plan(const vector<string>& vs, istream& ins, ostream& ous, ostream&)
@@ -111,17 +111,17 @@ inline int add_course(const vector<string>& vs, istream& ins, ostream& ous, ostr
 	//need para
 	string cname;
 	unsigned int val;
-	if(mps["-n"].first)
+	if(mps["-name"].first)
 	{
-		cname = vs[mps["-n"].second + 1];
+		cname = vs[mps["-name"].second + 1];
 	}else
 	{
 		ous << "输入课程名:(回车结束)" << flush;
 		getline(ins, cname);
 	}
-	if(mps["-v"].first)
+	if(mps["-val"].first)
 	{
-		val = stoi(vs[mps["-v"].second]);
+		val = stoi(vs[mps["-val"].second+1]);
 	}
 	else
 	{
@@ -139,7 +139,7 @@ inline int del_plan(const vector<string>& vs, istream& ins, ostream& ous, ostrea
 {
 	//need para
 	auto mps = transCmdParasTomap(vs);
-	if (mps["all"].first)
+	if (mps["-all"].first)
 	{
 		all_table.clear();
 	}
@@ -151,8 +151,10 @@ inline int del_plan(const vector<string>& vs, istream& ins, ostream& ous, ostrea
 			ous << "请输入删除范围，当前日为0,del [l,r)" << flush;
 			ins >> l >> r;
 		}
-		l = stoi(vs[mps["-r"].second + 1]);
-		r = stoi(vs[mps["-r"].second + 2]);
+		else {
+			l = stoi(vs[mps["-r"].second + 1]);
+			r = stoi(vs[mps["-r"].second + 2]);
+		}
 		decay_t<decltype(all_table)> nat;
 		auto today = todayWhoDay();
 		for (auto& t : all_table)

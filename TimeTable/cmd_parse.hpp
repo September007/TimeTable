@@ -1,5 +1,6 @@
 #pragma once
 #include"inc.hpp"
+#include"type.hpp"
 struct command_parser;
 struct detail_command_task_type;
 using command_task_type = detail_command_task_type;
@@ -9,12 +10,23 @@ using msec = map<string, extend_command_task_type>;
 inline_reference_var_helper(msc, reg_commands);
 inline_reference_var_helper(msec, reg_extend_commands);
 
-struct detail_command_task_type:function<int(const vector<string>&, istream&, ostream&, ostream&)>
+struct detail_command_task_type :function<int(const vector<string>&, istream&, ostream&, ostream&)>
 {
 	using My_Base = function<int(const vector<string>&, istream&, ostream&, ostream&)>;
 	string specification = "";
-template<typename ...argTypes>
-detail_command_task_type(argTypes...args) :My_Base(args...),specification() {}
+	detail_command_task_type() = default;
+	detail_command_task_type(void*):My_Base(nullptr){}
+	template<non_can_be_string_type _first , typename ...argTypes>
+	detail_command_task_type( _first _f,argTypes...args) :My_Base(_f,args...), specification() {}
+	template<typename ...argTypes>
+	detail_command_task_type(string spe,argTypes...args) : My_Base(args...), specification(spe) {}
+};
+struct extend_detail_command_task_type :function<int(const command_parser& cp, const vector<string>&, istream&, ostream&, ostream&)>
+{
+	using My_Base = function<int(const command_parser& cp, const vector<string>&, istream&, ostream&, ostream&)>;
+	string specification = nullptr; 
+	template<typename ...argTypes>
+	extend_detail_command_task_type(argTypes...args) :My_Base(args...), specification() {}
 };
 inline vector<string> getOneCommand(istream& in)
 {

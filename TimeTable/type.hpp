@@ -36,3 +36,10 @@ template<typename T>concept pair_type
 
 template<typename T>concept string_type
 = same_as<string, decay_t<T>>;
+template<typename T>concept non_string_type
+= !same_as<string, decay_t<T>>;
+
+template<typename T>concept can_be_string_type
+= convertible_to<decay_t<T>, string>;
+template<typename T>concept non_can_be_string_type
+= !can_be_string_type<T>;
