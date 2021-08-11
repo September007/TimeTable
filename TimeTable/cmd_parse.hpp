@@ -3,8 +3,9 @@
 #include"type.hpp"
 struct command_parser;
 struct detail_command_task_type;
+struct extend_detail_command_task_type;
 using command_task_type = detail_command_task_type;
-using extend_command_task_type = function<int(const command_parser&cp,const vector<string>&, istream&, ostream&, ostream&)>;
+using extend_command_task_type = extend_detail_command_task_type;// function<int(const command_parser&cp,const vector<string>&, istream&, ostream&, ostream&)>;
 using msc = map<string, command_task_type>;
 using msec = map<string, extend_command_task_type>;
 inline_reference_var_helper(msc, reg_commands);
@@ -24,9 +25,13 @@ struct detail_command_task_type :function<int(const vector<string>&, istream&, o
 struct extend_detail_command_task_type :function<int(const command_parser& cp, const vector<string>&, istream&, ostream&, ostream&)>
 {
 	using My_Base = function<int(const command_parser& cp, const vector<string>&, istream&, ostream&, ostream&)>;
-	string specification = nullptr; 
+	string specification = "";
+	extend_detail_command_task_type() = default;
+	extend_detail_command_task_type(void*) :My_Base(nullptr) {}
+	template<non_can_be_string_type _first, typename ...argTypes>
+	extend_detail_command_task_type(_first _f, argTypes...args) : My_Base(_f, args...), specification() {}
 	template<typename ...argTypes>
-	extend_detail_command_task_type(argTypes...args) :My_Base(args...), specification() {}
+	extend_detail_command_task_type(string spe, argTypes...args) : My_Base(args...), specification(spe) {}
 };
 inline vector<string> getOneCommand(istream& in)
 {
@@ -130,7 +135,8 @@ struct command_parser
 	{
 		//Ìî³äÀ©Õ¹ÃüÁî
 		for (auto& ecm : ecms)
-			this->cms.insert(pair<string, command_task_type>(ecm.first, (command_task_type)bind(ecm.second, (const command_parser&)(*this), placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4)));
+			//this->cms.insert(pair<string, command_task_type>(ecm.first, (command_task_type)bind(ecm.second, (const command_parser&)(*this), placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4)));
+			this->cms[ecm.first] = { ecm.second.specification,[this, &ecm](const vector<string>& vs, istream& ins, ostream& ous, ostream& errs) {return ecm.second(*this, vs, ins, ous, errs); } };
 	}
 	int operator()(const vector<string>& pms,istream& ins = cin, ostream& ous = cout, ostream& errs = cerr)const
 	{

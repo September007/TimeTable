@@ -77,14 +77,14 @@ inline int add_plan(const vector<string>& vs, istream& ins, ostream& ous, ostrea
 	//need para
 	int cook_len, head_count = 1, tail_circle_count = 1;
 	auto mps = transCmdParasTomap(vs);
-	if (!mps["-l"].first)
+	if (!mps["-len"].first)
 	{
 		ous << "请输入计划长度:";
 		ins >> cook_len;
 	}
 	else
 	{
-		cook_len = stoi(vs[mps["-l"].second + 1]);
+		cook_len = stoi(vs[mps["-len"].second + 1]);
 	}
 	auto cnt = cook_new_table(all_table, undoDayWho(todayWhoDay()), default_time_split, cook_len, head_count, tail_circle_count);
 	for (auto& nt : cnt)
@@ -146,7 +146,7 @@ inline int del_plan(const vector<string>& vs, istream& ins, ostream& ous, ostrea
 	else
 	{
 		int l, r;
-		if (mps["-r"].first != true)
+		if (mps["-range"].first != true)
 		{
 			ous << "请输入删除范围，当前日为0,del [l,r)" << flush;
 			ins >> l >> r;
@@ -208,10 +208,10 @@ inline int fresh_plan(const vector<string>& vs, istream& ins, ostream& ous, ostr
 	auto sps = transCmdParasTomap(vs);
 	int l, r;
 	auto today = todayWhoDay();
-	if (sps["-r"].first)
+	if (sps["-range"].first)
 	{
-		l = stoi(vs[sps["-r"].second + 1]);
-		r = stoi(vs[sps["-r"].second + 2]);
+		l = stoi(vs[sps["-range"].second + 1]);
+		r = stoi(vs[sps["-range"].second + 2]);
 	}
 	else
 	{
@@ -292,18 +292,18 @@ inline int fresh_course(const vector<string>& vs, istream& ins, ostream& ous, os
 inline void exclusive_default_initial_cms(msc& ncs, msec& cs)
 {
 	default_initial_cmds(ncs, cs);
-	ncs["show plan"] = show_plan;
-	ncs["add plan"] = add_plan;
-	ncs["del plan"] = del_plan;
-	ncs["fresh plan"] = fresh_plan;
+	ncs["show plan"] = { "展示计划 ", show_plan };
+	ncs["add plan"] = { "添加计划 \n 用法示例:\n add plan -len 10",add_plan };
+	ncs["del plan"] = { "删除计划 \n用法示例:\n del plan -all\ndel plan -range -100 100",del_plan };
+	ncs["fresh plan"] = { "刷新计划 \n用法示例:\n fresh plan -range 0 100",fresh_plan };
 
-	ncs["show course"] = show_course;
-	ncs["add course"] = add_course;
-	ncs["del course"] = del_course;
-	ncs["fresh course"] = del_course;
+	ncs["show course"] = { "展示课程", show_course };
+	ncs["add course"] = { "添加课程 \n用法示例:\nadd course -name yoga -val 10", add_course };
+	ncs["del course"] = { "删除课程\n用法示例:\ndel course -name baba",del_course };
+	ncs["fresh course"] = { "刷新课程\n用法示例:\nfresh course -from \"高数\" -to \"baba\"",fresh_course };
 	
-	ncs["del repeat"] = del_repeat;
+	ncs["del repeat"] = { "删除重复课程和重复安排", del_repeat };
 	
 	ncs.erase(ncs.find("example"));
-	cs["example"] = example;
+	cs["example"] = { "示例",example };
 }

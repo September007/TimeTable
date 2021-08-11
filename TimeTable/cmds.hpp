@@ -150,7 +150,7 @@ inline static int list(const command_parser& cp, const vector<string>&, istream&
 }
 inline static int help(const command_parser& cp, const vector<string>&, istream&, ostream&, ostream&ous)
 {
-	ous << "type list to check all the commands,or type example for commands example \ncopyright lull@2021" << endl;
+	ous << " type list to check all the commands,\n or type example for commands example, \n or type man to find the manual of certain command\ncopyright lull@2021" << endl;
 	return 0;
 }
 inline static int man(const command_parser& cp, const vector<string>&vs, istream&, ostream&, ostream& ous)
@@ -167,10 +167,10 @@ inline void default_initial_cmds(map<string, command_task_type>& cms,msec &cems 
 {
 	cms.insert(noneNameCmds.begin(), noneNameCmds.end());
 	cms["sys"] = {"调用system转原生shell", sys};
-	cms["echo"] = echo;
-	cms["stupid_shell"] = stupid_shell;
+	cms["echo"] = { "just echo",echo };
+	cms["stupid_shell"] = { "简单(愚蠢)的命令解释器", stupid_shell };
 	
-	cems["man"] = man ;
-	cems["list"] = ::list;
+	cems["man"] = { "查找帮助", man };
+	cems["list"] = { "列出所有命令",::list };
 	cems["help"] = ::help;
 }
