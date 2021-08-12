@@ -110,6 +110,28 @@ inline vector<string> getOneCommand(istream& in)
 	}
 	return ret;
 }
+
+inline string undoParas(const vector<string> vs, int begin = 0)
+{
+	string ret;
+	if (begin >= vs.size())return ret;
+	while (begin < vs.size())
+	{
+		if (vs[begin].find_first_of('"') != string::npos) {
+			ret += ' "';
+			for (auto c : vs[begin])
+				if (c == '"')
+					ret += "\\\"";
+				else
+					ret += c;
+			ret += '"';
+		}
+		else
+			ret += " "+vs[begin];
+		begin++;
+	}
+	return ret;
+}
 inline command_task_type find_task(msc& cms, const vector<string>&pms)
 {
 	if (pms.empty())return nullptr;
@@ -125,6 +147,7 @@ inline command_task_type find_task(msc& cms, const vector<string>&pms)
 			if (sc.first == curCmdName)
 				return sc.second;
 	}
+	//·µ»Ønullptr
 	return nullptr;
 }
 struct command_parser
@@ -142,8 +165,16 @@ struct command_parser
 	{
 		auto task = find_task(cms, pms);
 		if (task == nullptr) {
-			errs << "not found command:" << pms[0];
-			return -1;
+			if(!pms.empty())
+			{
+				auto cmd = pms[0] + undoParas(pms, 1);
+				auto ret = system(cmd.c_str());
+				return ret;
+			}
+			else
+				return 0;
+			//errs << "not found command:" << pms[0];
+			//return -1;
 		}
 		return task(pms, ins, ous, errs);
 	}

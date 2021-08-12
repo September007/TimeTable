@@ -34,13 +34,13 @@ inline int show_plan(const vector<string>& vs, istream&, ostream& ous, ostream&)
 	};
 #define dec_lam [&](const lesson_table_one_day&l)
 	//rest plan
-	if (sps["rest"].first)
+	if (sps["-rest"].first)
 		print(dec_lam{ return l.whoDay >= today; });
-	else if (sps["recent"].first)
+	else if (sps["-recent"].first)
 	{
 		//todo:...
 	}
-	else if (sps["all"].first)
+	else if (sps["-all"].first)
 	{
 		for (auto& l : vl)
 			outputPlan(l, ous);
@@ -49,6 +49,10 @@ inline int show_plan(const vector<string>& vs, istream&, ostream& ous, ostream&)
 	{
 		int nextN = stoi(vs[sps["-n"].second + 1]);
 		print(dec_lam{ return l.whoDay >= today && l.whoDay <= today + nextN; });
+	}else if(sps["-certain"].first)
+	{
+		int day = stoi(vs[sps["-certain"].second + 1]);
+		print(dec_lam{ return l.whoDay == day + today; });
 	}
 	else
 	{//default:rest
@@ -152,8 +156,8 @@ inline int del_plan(const vector<string>& vs, istream& ins, ostream& ous, ostrea
 			ins >> l >> r;
 		}
 		else {
-			l = stoi(vs[mps["-r"].second + 1]);
-			r = stoi(vs[mps["-r"].second + 2]);
+			l = stoi(vs[mps["-range"].second + 1]);
+			r = stoi(vs[mps["-range"].second + 2]);
 		}
 		decay_t<decltype(all_table)> nat;
 		auto today = todayWhoDay();
@@ -172,6 +176,10 @@ inline int del_course(const vector<string>& vs, istream& ins, ostream& ous, ostr
 {
 	auto mps = transCmdParasTomap(vs);
 	string name;
+	if(mps["-all"].first)
+	{
+		all_course.clear();
+	}else
 	if(mps["-name"].first)
 	{
 		name = vs[mps["-name"].second + 1];

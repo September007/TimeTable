@@ -4,24 +4,8 @@
 #pragma once
 #include"inc.hpp"
 #include"cmd_parse.hpp"
+#include"course_define.hpp"
 #include<unordered_map>
-inline string undoParas(const vector<string> vs, int begin = 0)
-{
-	string ret;
-	if (begin >= vs.size())return ret;
-	while (begin < vs.size())
-	{
-		ret += ' "';
-		for (auto c : vs[begin])
-			if (c == '"')
-				ret += "\\\"";
-			else
-				ret += c;
-		ret += '"';
-		begin++;
-	}
-	return ret;
-}
 inline unordered_map<string, bool> getSpecialCmdParas(const vector<string>& paras)
 {
 	unordered_map<string, bool >ret;
@@ -92,7 +76,7 @@ inline int stupid_shell(const vector<string>& vs, istream& ins, ostream& ous, os
 				cp({ "add plan","-l 1" });
 		}
 	}
-	int ret;
+	int ret = 0;
 	cp({ "help" });
 	cp({ "echo", "\nTimeTable>","-n" });
 	while (1)
@@ -102,6 +86,7 @@ inline int stupid_shell(const vector<string>& vs, istream& ins, ostream& ous, os
 		auto pms = getOneCommand(ins);
 		if (pms.size() > 0)
 			ret = cp(pms);
+		else continue;
 		switch (ret)
 		{
 		case retIndicates::shell_direct_leave:
@@ -150,7 +135,7 @@ inline static int list(const command_parser& cp, const vector<string>&, istream&
 }
 inline static int help(const command_parser& cp, const vector<string>&, istream&, ostream&, ostream&ous)
 {
-	ous << " type list to check all the commands,\n or type example for commands example, \n or type man to find the manual of certain command\ncopyright lull@2021" << endl;
+	ous << " type list to check all the commands,\n or type example for commands example, \n or type man to find the manual of certain command\nNote: if there is no command paired, instruction will be retransmit to windows cmd\nif commands collide use sys prefix to force cmd execute\ncopyright lull@2021" << endl;
 	return 0;
 }
 inline static int man(const command_parser& cp, const vector<string>&vs, istream&, ostream&, ostream& ous)
