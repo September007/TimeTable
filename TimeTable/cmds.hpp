@@ -74,6 +74,10 @@ inline int stupid_shell(const vector<string>& vs, istream& ins, ostream& ous, os
 			c = toupper(c);
 			if (c == 'Y')
 				cp({ "add plan","-l 1" });
+		}else
+		{
+			ous << "today's plan:" << endl;
+			cp({ "show plan","-certain","0"});
 		}
 	}
 	int ret = 0;

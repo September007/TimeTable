@@ -80,25 +80,34 @@ inline int add_plan(const vector<string>& vs, istream& ins, ostream& ous, ostrea
 {
 	//need para
 	int cook_len, head_count = 1, tail_circle_count = 1;
+	int today = undoDayWho(todayWhoDay()), firstDay = today;
 	auto mps = transCmdParasTomap(vs);
-	if (!mps["-len"].first)
+	if(mps["-range"].first)
 	{
-		ous << "请输入计划长度:";
-		ins >> cook_len;
+		firstDay = today + stoi(vs[mps["-range"].second + 1]);
+		cook_len = stoi(vs[mps["-range"].second + 2]) - stoi(vs[mps["-range"].second + 1]);
 	}
 	else
 	{
-		cook_len = stoi(vs[mps["-len"].second + 1]);
+		if (!mps["-len"].first)
+		{
+			ous << "请输入计划长度:";
+			ins >> cook_len;
+		}
+		else
+		{
+			cook_len = stoi(vs[mps["-len"].second + 1]);
+		}
 	}
-	auto cnt = cook_new_table(all_table, undoDayWho(todayWhoDay()), default_time_split, cook_len, head_count, tail_circle_count);
+	auto cnt = cook_new_table(all_table, firstDay, default_time_split, cook_len, head_count, tail_circle_count);
 	for (auto& nt : cnt)
 		outputPlan(nt, ous);
 	//是否保存
 willstore:
 	ous << "是否保存 Y/N[Y]" << flush;
 	char c;
-	ins >> c;;
-	toupper(c);
+	ins >> c;
+	c=toupper(c);
 	if (ins && (c != 'Y' && c != 'N'))
 		goto willstore;
 	if (c == 'Y')
@@ -301,13 +310,13 @@ inline void exclusive_default_initial_cms(msc& ncs, msec& cs)
 {
 	default_initial_cmds(ncs, cs);
 	ncs["show plan"] = { "展示计划 ", show_plan };
-	ncs["add plan"] = { "添加计划 \n 用法示例:\n add plan -len 10",add_plan };
+	ncs["add plan"] = { "添加计划 \n 用法示例:\n add plan -len 10\nadd plan -range 0 10",add_plan };
 	ncs["del plan"] = { "删除计划 \n用法示例:\n del plan -all\ndel plan -range -100 100",del_plan };
 	ncs["fresh plan"] = { "刷新计划 \n用法示例:\n fresh plan -range 0 100",fresh_plan };
 
 	ncs["show course"] = { "展示课程", show_course };
 	ncs["add course"] = { "添加课程 \n用法示例:\nadd course -name yoga -val 10", add_course };
-	ncs["del course"] = { "删除课程\n用法示例:\ndel course -name baba",del_course };
+	ncs["del course"] = { "删除课程\n用法示例:\ndel course -name baba\ndel course -all",del_course };
 	ncs["fresh course"] = { "刷新课程\n用法示例:\nfresh course -from \"高数\" -to \"baba\"",fresh_course };
 	
 	ncs["del repeat"] = { "删除重复课程和重复安排", del_repeat };
