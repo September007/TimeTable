@@ -200,3 +200,13 @@ TEST(serialize, __auto_udf_register) {
 
 	delete_directory("data/test");
 }
+
+TEST(serialize,deeper_pair)
+{
+	using ppispfb = pair<pair<int, string>, pair<float, bool>>;
+	stringstream ss;
+	ppispfb exp = { {1,string("2ya")},{1.2f,true} }, t;
+	store(ss, exp);
+	t = recover<ppispfb>(ss);
+	EXPECT_EQ(exp, t);
+}

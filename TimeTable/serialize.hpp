@@ -120,8 +120,8 @@ namespace dataManager {
 	template<pair_type type>
 	type recover(stringstream& ss) {
 		//pair<_First, _Second> ret;
-		decay_t<typename type::first_type> first = recover<decay_t< type::first_type>>(ss);//pair<int,int>::first_type
-		decay_t<typename type::second_type> second = recover<type::second_type>(ss);
+		decay_t<typename type::first_type> first = recover<decay_t< type::first_type>>(ss);//pair<int,int>::second_type
+		decay_t<typename type::second_type> second = recover<decay_t< type::second_type>>(ss);
 		return type({first, second});
 	}
 	template<Container type> 

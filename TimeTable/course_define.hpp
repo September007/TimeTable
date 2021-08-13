@@ -69,8 +69,8 @@ inline  vector<course>& all_course = all_course_sub();
 inline vector<lesson_table_one_day>& all_table = all_table_sub();
 struct time_split_manage
 {
-	using split_form_type = vector<pair<time_t, time_t>>;
 	using split_key_type = string;
+	using split_form_type = vector<pair<time_t, time_t>>;
 	map<split_key_type, split_form_type> sols;
 	time_split_manage() = default;
 	split_form_type get_time_split(split_key_type key)
@@ -99,7 +99,8 @@ struct time_split_manage
 	{"4:00"_HM,"5:00"_HM},
 	{"8:00"_HM,"9:00"_HM} };
 };
-
+//全局管理
+inline_reference_var_helper(time_split_manage, time_split_manager);
 /***************************************/
 /************ cook lesson table ********/
 /***************************************/
@@ -118,7 +119,7 @@ inline vector<pair<time_t, time_t>> default_time_split = {
 	{"3:00"_HM,"4:00"_HM},
 	{"4:00"_HM,"5:00"_HM},
 	{"8:00"_HM,"9:00"_HM}
-};
+}; 
 /// <summary>
 /// 计算接下来几天的课程安排
 /// </summary>
