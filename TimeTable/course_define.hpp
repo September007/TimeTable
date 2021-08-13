@@ -4,6 +4,7 @@
 #pragma once
 #include"inc.hpp"
 #include<random>
+#include <chrono>
 #include"initializer.hpp"
 #include"serialize.hpp"
 #include"time_transform.hpp"
@@ -204,7 +205,7 @@ cook_new_table(const vector<lesson_table_one_day>& record, time_t new_table_time
 		}
 		throw std::exception("check me");
 	};
-	auto randObj = mt19937_64();
+	auto randObj = mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
 	for (int i = 0; i<int(ret.size()); ++i)
 	{
 		auto& lesTable = ret[i];
