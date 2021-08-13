@@ -89,10 +89,29 @@ inline void unset_boolalpha_if_bool(stringstream& ss) { if constexpr (is_same_v<
 #define  chooseFile
 #ifdef chooseFile
 namespace dataManager {
+
+	/**********************************************************/
+	/****************** for special type **********************/
+	/**********************************************************/
+	//模板也有声明顺序的讲究,当前实现的模板只能使用在他之前声明过的模板
 	
 	/////////////
 	// recover //
 	/////////////
+	template<built_in_non_array_type type>
+	type recover(stringstream& ss);
+	template<imple_recover_store type>
+	type recover(stringstream& ss);
+	template<string_type type>
+	type recover(stringstream& ss);
+	template<pair_type type>
+	type recover(stringstream& ss);
+	template<Container type>
+	type recover(stringstream& ss);
+
+	/**********************************************************/
+	/****************** recover implementation ****************/
+	/**********************************************************/
 	template<built_in_non_array_type type>
 	type recover(stringstream& ss)
 	{
@@ -120,12 +139,12 @@ namespace dataManager {
 	template<pair_type type>
 	type recover(stringstream& ss) {
 		//pair<_First, _Second> ret;
-		decay_t<typename type::first_type> first = recover<decay_t< type::first_type>>(ss);//pair<int,int>::second_type
-		decay_t<typename type::second_type> second = recover<decay_t< type::second_type>>(ss);
+		auto first = recover<decay_t< type::first_type>>(ss);//pair<int,int>::second_type
+		auto second = recover<decay_t< type::second_type>>(ss);
 		return type({first, second});
 	}
 	template<Container type> 
-	 type	recover(stringstream &ss)
+	 type recover(stringstream &ss)
 	{
 		vector<typename type::value_type> tempVector;
 		decay_t<type> ret;
@@ -143,8 +162,21 @@ namespace dataManager {
 	/////////////
 	//  store  //
 	/////////////
-	template<built_in_non_array_type type> 
-	stringstream&	store(stringstream& ss, const type &data) 
+	template<built_in_non_array_type type>
+	 stringstream& store(stringstream& ss, const type& data);
+	 template<imple_recover_store type>
+	 stringstream& store(stringstream& ss, const type data);
+	 template<string_type type>
+	 stringstream& store(stringstream& ss, const type& data);
+	 template<pair_type T>
+	 stringstream& store(stringstream& ss, const T& data);
+	 template<Container T>
+	 stringstream& store(stringstream& ss, const T& con);
+	template<built_in_non_array_type type>
+	/**********************************************************/
+	/****************** store implementation ******************/
+	/**********************************************************/
+	 stringstream& store(stringstream& ss, const type& data)
 	{
 		//for bool 
 		set_boolalpha_if_bool<type>(ss);
@@ -157,23 +189,11 @@ namespace dataManager {
 	{
 		return type::store(ss, data);
 	};
-	/**********************************************************/
-	/****************** for special type **********************/
-	/**********************************************************/
-	//模板也有声明顺序的讲究，string须在pair前，pair须在container前
-	//所以最好是声明和实现分开
 	template<string_type type>
 	 stringstream & store(stringstream& ss, const type& data) {
 		ss << formlize(data);
 		return ss;
 	}
-	template<pair_type T>
-		stringstream& store(stringstream& ss, const T& data);
-	template<Container T>
-		stringstream& store(stringstream& ss, const T& con);
-	/**********************************************************/
-	/****************** store implementation ******************/
-	/**********************************************************/
 	template<pair_type T> 
 		stringstream& store(stringstream& ss, const T& data) {
 			store<T::first_type>(ss, data.first);

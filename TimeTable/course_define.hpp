@@ -67,40 +67,42 @@ inline vector<lesson_table_one_day>& all_table_sub() {
 }
 inline  vector<course>& all_course = all_course_sub();
 inline vector<lesson_table_one_day>& all_table = all_table_sub();
-struct time_split_manage
-{
-	using split_key_type = string;
-	using split_form_type = vector<pair<time_t, time_t>>;
-	map<split_key_type, split_form_type> sols;
-	time_split_manage() = default;
-	split_form_type get_time_split(split_key_type key)
-	{
-		auto p = sols.find(key);
-		if (p == sols.end()) { return default_split_form; }
-		else return p->second;
-	}
-	static stringstream & store(stringstream&ss,const time_split_manage&data)
-	{
-		dataManager::store(ss, data.sols);
-		return ss;
-	}
-	static time_split_manage recover(stringstream&ss)
-	{
-		time_split_manage ret;
-		ret.sols=dataManager::recover<decltype(time_split_manage::sols)>(ss);
-		return ret;
-	}
-	static inline split_form_type default_split_form = {
-		{"9:00"_HM,"10:00"_HM},
-	{"10:00"_HM,"11:00"_HM},
-	{"11:00"_HM,"12:00"_HM},
-	{"2:00"_HM,"3:00"_HM},
-	{"3:00"_HM,"4:00"_HM},
-	{"4:00"_HM,"5:00"_HM},
-	{"8:00"_HM,"9:00"_HM} };
-};
-//全局管理
-inline_reference_var_helper(time_split_manage, time_split_manager);
+//struct time_split_manage
+//{
+//	using split_key_type = string;
+//	using split_form_type = vector<pair<time_t, time_t>>;
+//	map<split_key_type, split_form_type> sols;
+//	time_split_manage() = default;
+//	split_form_type get_time_split(split_key_type key)
+//	{
+//		auto p = sols.find(key);
+//		if (p == sols.end()) { return default_split_form; }
+//		else return p->second;
+//	}
+//	static stringstream & store(stringstream&ss,const time_split_manage&data)
+//	{
+//		decltype(sols)::value_type;
+//		//constexpr bool b= built_in_non_array_type<long long>;
+//		dataManager::store(ss, data.sols);
+//		return ss;
+//	}
+//	static time_split_manage recover(stringstream&ss)
+//	{
+//		time_split_manage ret;
+//		ret.sols=dataManager::recover<decltype(time_split_manage::sols)>(ss);
+//		return ret;
+//	}
+//	static inline split_form_type default_split_form = {
+//		{"9:00"_HM,"10:00"_HM},
+//	{"10:00"_HM,"11:00"_HM},
+//	{"11:00"_HM,"12:00"_HM},
+//	{"2:00"_HM,"3:00"_HM},
+//	{"3:00"_HM,"4:00"_HM},
+//	{"4:00"_HM,"5:00"_HM},
+//	{"8:00"_HM,"9:00"_HM} };
+//};
+////全局管理
+//inline_reference_var_helper(time_split_manage, time_split_manager);
 /***************************************/
 /************ cook lesson table ********/
 /***************************************/

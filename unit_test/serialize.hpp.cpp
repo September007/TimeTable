@@ -201,7 +201,7 @@ TEST(serialize, __auto_udf_register) {
 	delete_directory("data/test");
 }
 
-TEST(serialize,deeper_pair)
+TEST(serialize, deeper_pair)
 {
 	using ppispfb = pair<pair<int, string>, pair<float, bool>>;
 	stringstream ss;
@@ -209,4 +209,44 @@ TEST(serialize,deeper_pair)
 	store(ss, exp);
 	t = recover<ppispfb>(ss);
 	EXPECT_EQ(exp, t);
+}
+TEST(serialize, vector_with_deeper_pair)
+{
+	using ppispfb = pair<pair<int, string>, pair<float, bool>>;
+	stringstream ss;
+	vector<ppispfb >exp = { { {1,string("2ya")},{1.2f,true} },{ {1,string("2ya")},{1.2f,true} },{ {1,string("2ya")},{1.2f,true} } }, t;
+	store(ss, exp);
+	t = recover<vector<ppispfb >>(ss);
+	EXPECT_EQ(exp, t);
+}
+
+TEST(serialize,time_split_manage___mkf)
+{
+	using split_key_type = string;
+	using split_form_type = vector<pair<time_t, time_t>>;
+	using mkf = map<split_key_type, split_form_type>;
+	mkf exp = {
+		{string("01"),{pair<time_t,time_t>(1,2)}},
+		{string("02"),{pair<time_t,time_t>(3,4)}},
+		{string("03"),{pair<time_t,time_t>(5,6)}},
+		{string("04"),{pair<time_t,time_t>(7,8)}},
+	}, t;
+	stringstream ss;
+	store(ss, exp);
+	t = recover<mkf>(ss);
+	EXPECT_EQ(exp, t);
+}
+
+TEST(serialize,time_split_manage__mkf__value_Type)
+{
+	using split_key_type = string;
+	using split_form_type = vector<pair<time_t, time_t>>;
+	using vt = map<split_key_type, split_form_type>::value_type;
+	vt exp = { string("exp"),{{1,2},{3,4},{5,6}} };
+	stringstream ss;
+	store(ss, exp);
+	auto first = recover<vt::first_type>(ss);
+	auto second = recover<decay_t< vt::second_type>>(ss);
+	vt comb = { first,second };
+	EXPECT_EQ(exp,comb);
 }

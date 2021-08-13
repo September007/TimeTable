@@ -1,5 +1,12 @@
 #pragma once
 #pragma warning(disable:4996)
+#pragma warning(disable:4244)
+#pragma warning(disable:4305)
+#pragma warning(disable:4091)
+#pragma warning(disable:26495)
+#pragma warning(disable:26812)
+#pragma warning(disable:26451)
+#pragma warning(disable:4309)
 #include<iostream>
 #include<fstream>
 #include<sstream>
