@@ -50,6 +50,7 @@
   <ItemGroup>
     <ClCompile Include="cmds.hpp.cpp" />
     <ClCompile Include="cmd_parse.hpp.cpp" />
+    <ClCompile Include="lesson_atrribute.hpp.cpp" />
     <ClCompile Include="serialize.hpp.cpp" />
     <ClCompile Include="time_tranform.hpp.cpp" />
     <ClCompile Include="type.hpp.cpp" />
