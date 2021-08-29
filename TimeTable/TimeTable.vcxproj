@@ -146,6 +146,7 @@
     <ClInclude Include="cmds.hpp" />
     <ClInclude Include="cmd_parse.hpp" />
     <ClInclude Include="course_define.hpp" />
+    <ClInclude Include="cvt.h" />
     <ClInclude Include="exclusive_cmds.hpp" />
     <ClInclude Include="initializer.hpp" />
     <ClInclude Include="lesson_time.hpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="inc.hpp" />
     <ClInclude Include="time_transform.hpp" />
     <ClInclude Include="type.hpp" />
+    <ClInclude Include="Voice.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

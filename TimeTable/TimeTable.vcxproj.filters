@@ -45,6 +45,12 @@
     <ClInclude Include="lesson_time.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Voice.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="cvt.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

@@ -82,7 +82,7 @@ inline string dateFormat(time_t tt,const string &fs="YYYY/MM/DD HH24:MI:SS")
     string ret = fs;
     tm ftm;
 #ifdef WIN32
-    tm1 = *localtime(&tt);
+    ftm = *localtime(&tt);
 #else
     localtime_s(&ftm, &tt);
 #endif

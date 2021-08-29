@@ -32,6 +32,15 @@ using std::map;
 #define trace_arg(arg) cout<<#arg<<arg<<endl
 #define inline_reference_var_helper(type,name) inline type& name##_sub(){static type sta_##name;return sta_##name;}inline type &name=name##_sub();
 
+//生命期任务对象
+struct birthDeath {
+	using task_type = function<void(void)>;
+	task_type birth, death;
+	birthDeath(task_type birth, task_type death) :birth(birth), death(death) { if(birth!=nullptr) birth(); }
+	~birthDeath() { if(death!=nullptr) death(); }
+};
+
+
 //stringstream 流的转换
 inline std::stringstream& ssOS2SS(std::ostream & ssOS) {
 	auto* p = (std::stringstream*)&ssOS;

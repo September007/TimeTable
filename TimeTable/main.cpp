@@ -1,4 +1,6 @@
- 
+ //voice.hpp should be put on th head
+#define WAV_PLAY
+#include"Voice.hpp"
 #include"inc.hpp"
 #include "serialize.hpp"
 #include"course_define.hpp"
@@ -27,9 +29,8 @@ void initialize_env()
 }
 
 int main() {
-
+	PlaySound(L"C:/Windows/Media/Alarm02.wav",NULL, SND_ASYNC);
 	initialize_env();
 	stupid_shell({ "stupid_shell" }, cin, cout, cerr);
-
 	return 0;
 }
